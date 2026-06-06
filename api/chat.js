@@ -11,12 +11,19 @@ export default async function handler(req, res) {
         'x-api-key': process.env.ANTHROPIC_API_KEY,
         'anthropic-version': '2023-06-01',
       },
-      body: JSON.stringify(req.body),
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1000,
+        system: req.body.system,
+        messages: req.body.messages,
+      }),
     });
 
     const data = await response.json();
+    console.log('Anthropic response:', JSON.stringify(data));
     res.status(200).json(data);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to contact Claude API' });
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
   }
 }
